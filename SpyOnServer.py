@@ -26,6 +26,9 @@ class player:
 #creates the client
 client = commands.Bot(command_prefix='/')
 
+#list of players
+players = []
+
 #This event makes sure that the bot is online
 @client.event
 async def on_ready():
