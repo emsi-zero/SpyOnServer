@@ -42,10 +42,13 @@ async def on_ready():
 #Starts the Game
 @commands.command()
 async def Game(ctx):
-    if(not GameStarted){
+    if(not GameStarted):
         GameStarted = True
-    }
-    await ctx.send('To All Agents! \nATTENTION! \nThere is a Spy among us! Find the culprit and bring him in ASAP!')
+        await ctx.send('To All Agents! \nATTENTION! \nThere is a Spy among us! Find the culprit and bring him in ASAP!')
+
+    else:
+        await ctx.send('The search has already begun!')
+        
 
 #adds a vote to players Suspicion votes
 @commands.command()
