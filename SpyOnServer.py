@@ -1,6 +1,28 @@
 import discord
 from discord.ext import commands
 
+
+class player:
+    
+    def __init__(self , member):
+        self.member = member
+        self.wins = 0
+        self.spy = False
+    
+    #adds to players wins for scoreboard
+    def wins(self):
+        self.wins = self.wins + 1
+
+    #reinitiates player spy status
+    def replay(self):
+        self.spy = False
+
+    #sets the player as the spy
+    def setSpy(self):
+        self.spy = True    
+
+
+
 #creates the client
 client = commands.Bot(command_prefix='/')
 
