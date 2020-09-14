@@ -44,10 +44,10 @@ async def on_ready():
 async def GameStart(ctx):
     if(not GameStarted):
         GameStarted = True
-        await ctx.send('To All Agents! \nATTENTION! \nThere is a Spy among us! Find the culprit and bring him in ASAP!')
+        ctx.send('To All Agents! \nATTENTION! \nThere is a Spy among us! Find the culprit and bring him in ASAP!')
 
     else:
-        await ctx.send('The search has already begun!')
+        ctx.send('The search has already begun!')
         
 
 #adds a vote to players Suspicion votes
