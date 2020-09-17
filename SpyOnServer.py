@@ -40,8 +40,8 @@ gameMessage = None
 startMessage = None
 
 async def callStartMessage(ID):
-    generalChannel = client.get_channel(ID)
-    startMessage = await generalChannel.send('Are you ready, Agent?!')
+    channel = client.get_channel(ID)
+    startMessage = await channel.send('Are you ready, Agent?!')
     await startMessage.add_reaction('U0002705')
 
 #This event makes sure that the bot is online
@@ -50,6 +50,13 @@ async def on_ready():
     print('Bot is online!')
     
     
+# makes the bot ready
+@client.command()
+async def Ready(ctx):
+    guild = ctx.message.guild
+    channel = await guild.create_text_channel('Top Secret Channel')
+    await callStartMessage(channel.id)
+
 
 #Starts the Game
 @client.command()
