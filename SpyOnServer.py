@@ -36,18 +36,26 @@ players = []
 
 game = Game()
 Bot = discord.ClientUser
-GameMessage = None
+gameMessage = None
+startMessage = None
+
+async def callStartMessage(ID):
+    generalChannel = client.get_channel(ID)
+    startMessage = await generalChannel.send('Are you ready, Agent?!')
+    await startMessage.add_reaction('U0002705')
 
 #This event makes sure that the bot is online
 @client.event
 async def on_ready():
     print('Bot is online!')
+    
+    
 
 #Starts the Game
 @client.command()
 async def GameStart(ctx):
     
-    GameMessage = await ctx.send('Beep! Beep! Beep!')
+    gameMessage = await ctx.send('Beep! Beep! Beep!')
 
     # checks if the game has begun and send relative message
     if game.GameStarted == False:
