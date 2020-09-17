@@ -59,7 +59,7 @@ async def SpyOnServer(ctx):
     games[guild] = game
     game.channel = await guild.create_text_channel('Top Secret Channel')
     everyoneRole = guild.get_role(guild.id)
-    await channel.set_permissions(everyoneRole , read_messages = True , send_messages = False)
+    await game.channel.set_permissions(everyoneRole , read_messages = True , send_messages = False)
     await callStartMessage(game)
 
 
