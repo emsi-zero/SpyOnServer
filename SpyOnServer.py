@@ -36,8 +36,8 @@ class Game:
 #creates the client
 client = commands.Bot(command_prefix='/')
 
-
-game = Game()
+# a dictionary of games
+games = {}
 
 
 async def callStartMessage(game):
@@ -56,6 +56,7 @@ async def on_ready():
 async def SpyOnServer(ctx):
     guild = ctx.message.guild
     game = Game()
+    games[guild] = game
     game.channel = await guild.create_text_channel('Top Secret Channel')
     everyoneRole = guild.get_role(guild.id)
     await channel.set_permissions(everyoneRole , read_messages = True , send_messages = False)
@@ -66,6 +67,7 @@ async def SpyOnServer(ctx):
 @client.command()
 async def GameStart(ctx):
     guild = ctx.message.guild
+    game = games[guild]
     game.gameMessage = await game.channel.send('Beep! Beep! Beep!')
 
     # checks if the game has begun and send relative message
