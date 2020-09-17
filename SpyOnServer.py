@@ -35,7 +35,8 @@ client = commands.Bot(command_prefix='/')
 players = []
 
 game = Game()
-
+Bot = discord.ClientUser
+GameMessage = None
 
 #This event makes sure that the bot is online
 @client.event
@@ -45,14 +46,20 @@ async def on_ready():
 #Starts the Game
 @client.command()
 async def GameStart(ctx):
+    
+    GameMessage = await ctx.send('messege')
     if game.GameStarted == False:
         game.GameStarted = True
+        
         await ctx.send('To All Agents! \nATTENTION! \nThere is a Spy among us! Find the culprit and bring him in ASAP!')
 
     else:
         await ctx.send('The search has already begun!')
-        
+    
 
+
+
+        
     
 
 
