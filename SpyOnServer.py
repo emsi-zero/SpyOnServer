@@ -10,7 +10,7 @@ class player:
         self.spy = False
         self.suspicions = 0
         self.vote = False
-            
+
     #adds to players wins for scoreboard
     def wins(self):
         self.wins += 1
@@ -31,7 +31,7 @@ class Game:
         self.startMessage = None
         self.channel = None
         
-    def addPlayer(self, member):
+    async def addPlayer(self, member):
         self.players[member] = player()
 
 
