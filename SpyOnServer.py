@@ -52,7 +52,7 @@ async def on_ready():
     
 # makes the bot ready
 @client.command()
-async def Ready(ctx):
+async def SpyOnServer(ctx):
     guild = ctx.message.guild
     channel = await guild.create_text_channel('Top Secret Channel')
     await callStartMessage(channel.id)
