@@ -47,14 +47,15 @@ async def on_ready():
 @client.command()
 async def GameStart(ctx):
     
-    GameMessage = await ctx.send('messege')
+    GameMessage = await ctx.send('Beep! Beep! Beep!')
+
+    # checks if the game has begun and send relative message
     if game.GameStarted == False:
         game.GameStarted = True
-        
         await ctx.send('To All Agents! \nATTENTION! \nThere is a Spy among us! Find the culprit and bring him in ASAP!')
 
     else:
-        await ctx.send('The search has already begun!')
+        await ctx.send('The search has already begun! Continue to find the Spy!')
     
 
 
