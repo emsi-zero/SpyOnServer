@@ -26,23 +26,24 @@ class player:
 class Game:
     def __init__(self):
         self.GameStarted = False
+        self.players = []
+        self.gameMessage = None
+        self.startMessage = None
+        self.channel = None
+
 
 
 #creates the client
 client = commands.Bot(command_prefix='/')
 
-#list of players
-players = []
 
 game = Game()
-Bot = discord.ClientUser
-gameMessage = None
-startMessage = None
 
-async def callStartMessage(ID):
-    channel = client.get_channel(ID)
-    startMessage = await channel.send('Are you ready, Agent?!')
-    await startMessage.add_reaction('➕')
+
+async def callStartMessage(game):
+    channel = game.channel
+    game.startMessage = await channel.send('Are you ready, Agent?!')
+    await game.startMessage.add_reaction('➕')
 
 #This event makes sure that the bot is online
 @client.event
@@ -54,25 +55,26 @@ async def on_ready():
 @client.command()
 async def SpyOnServer(ctx):
     guild = ctx.message.guild
-    channel = await guild.create_text_channel('Top Secret Channel')
+    game = Game()
+    game.channel = await guild.create_text_channel('Top Secret Channel')
     everyoneRole = guild.get_role(guild.id)
     await channel.set_permissions(everyoneRole , read_messages = True , send_messages = False)
-    await callStartMessage(channel.id)
+    await callStartMessage(game)
 
 
 #Starts the Game
 @client.command()
 async def GameStart(ctx):
-    
-    gameMessage = await ctx.send('Beep! Beep! Beep!')
+    guild = ctx.message.guild
+    game.gameMessage = await game.channel.send('Beep! Beep! Beep!')
 
     # checks if the game has begun and send relative message
     if game.GameStarted == False:
         game.GameStarted = True
-        await ctx.send('To All Agents! \nATTENTION! \nThere is a Spy among us! Find the culprit and bring him in ASAP!')
+        await game.channel.send('To All Agents! \nATTENTION! \nThere is a Spy among us! Find the culprit and bring him in ASAP!')
 
     else:
-        await ctx.send('The search has already begun! Continue to find the Spy!')
+        await game.channel.send('The search has already begun! Continue to find the Spy!')
     
 
 
