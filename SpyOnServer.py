@@ -42,7 +42,7 @@ startMessage = None
 async def callStartMessage(ID):
     channel = client.get_channel(ID)
     startMessage = await channel.send('Are you ready, Agent?!')
-    await startMessage.add_reaction('U0002705')
+    await startMessage.add_reaction('➕')
 
 #This event makes sure that the bot is online
 @client.event
@@ -55,6 +55,8 @@ async def on_ready():
 async def SpyOnServer(ctx):
     guild = ctx.message.guild
     channel = await guild.create_text_channel('Top Secret Channel')
+    everyoneRole = guild.get_role(guild.id)
+    await channel.set_permissions(everyoneRole , read_messages = True , send_messages = False)
     await callStartMessage(channel.id)
 
 
