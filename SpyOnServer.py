@@ -5,12 +5,12 @@ import random
 
 class player:
     
-    def __init__(self , member):
-        self.member = member
+    def __init__(self):
         self.wins = 0
         self.spy = False
         self.suspicions = 0
-    
+        self.vote = False
+            
     #adds to players wins for scoreboard
     def wins(self):
         self.wins += 1
@@ -26,10 +26,13 @@ class player:
 class Game:
     def __init__(self):
         self.GameStarted = False
-        self.players = []
+        self.players = {}
         self.gameMessage = None
         self.startMessage = None
         self.channel = None
+        
+    def addPlayer(self, member):
+        self.players[member] = player()
 
 
 
@@ -44,6 +47,7 @@ async def callStartMessage(game):
     channel = game.channel
     game.startMessage = await channel.send('Are you ready, Agent?!')
     await game.startMessage.add_reaction('➕')
+    await game.startMessage.add_reaction('➖')
 
 #This event makes sure that the bot is online
 @client.event
