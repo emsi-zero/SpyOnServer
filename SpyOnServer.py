@@ -53,12 +53,6 @@ async def GameStart(ctx):
         await ctx.send('The search has already begun!')
         
 
-#adds a vote to players Suspicion votes
-@client.command()
-async def Suspect(member):
-    for pp in players:
-        if pp.member is member:
-            pp.suspicions += 1
     
 
 
