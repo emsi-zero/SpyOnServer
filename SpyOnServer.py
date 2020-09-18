@@ -2,7 +2,11 @@ import discord
 from discord.ext import commands
 import random
 
+# game words
 words = ['Physics' , 'Maths' , 'Chemistry']
+
+
+# player. not users! user are linked to players in the Game object. 
 class player:
     
     def __init__(self, name):
@@ -24,6 +28,8 @@ class player:
     def setSpy(self):
         self.spy = True    
 
+
+#Game object. all the game properties are in stored in this object.
 class Game:
     def __init__(self):
         self.GameStarted = False
@@ -34,20 +40,25 @@ class Game:
         self.votes = {}
         self.spy = None
         self.word = None
-        
+    
+    #adds a player to the players list.
     async def addPlayer(self, member):
         self.players[member] = player(member.name)
         print('player is added')
 
+    # removes a player from players list.
     async def removePlayer(self , member):
         self.players.pop(member)
         print('player is removed')
 
+
+    #assign the spy by random from players list.
     async def assignSpy(self):
         self.spy = random.choice(list(self.players.values()))
         self.spy.setSpy()
         print('spy is' + self.spy.name)
 
+    # finds and return the most suspicious player.
     def mostVoted(self):
         voted = player('sb')
         for culprit in self.players.values():
@@ -56,6 +67,7 @@ class Game:
         
         return voted
 
+    #sends all users DMs. the spy will recieve "you are the SPY" and the rest will recieve the game word
     async def sendUserMessages(self):
         for user in self.players.keys():
             if self.players[user] is self.spy:
@@ -63,6 +75,7 @@ class Game:
             else:
                 await user.send('the word is ' + self.word)
 
+    #re-initiates the game object, sends the gameMessage and start the game. 
     async def start(self):
         await self.channel.send('Beep! Beep! Beep!')
         self.word = random.choice(words)
@@ -87,11 +100,13 @@ class Game:
         else:
              await set.channel.send('The search has already begun! Continue to find the Spy!')
 
+
+    #resets the game .
     def reset(self):
         self.spy = None
         self.GameStarted = False
 
-
+    #finishes the game and reloads the game object.
     async def finishGame(self):
         if self.spy is self.mostVoted() :
             for player in self.players.values():
@@ -113,7 +128,7 @@ client = commands.Bot(command_prefix='/')
 # a dictionary of games
 games = {}
 
-
+# resends the startMessage
 async def callStartMessage(game):
     channel = game.channel
     game.startMessage = await channel.send('Are you ready, Agent?!')
@@ -125,7 +140,7 @@ async def on_ready():
     print('Bot is online!')
     
 
-
+#this events triggers by adding reactions and handles the game joining and adding votes.
 @client.event
 async def on_raw_reaction_add(payload):
     guild = await client.fetch_guild(payload.guild_id)
@@ -157,7 +172,7 @@ async def on_raw_reaction_add(payload):
                 if reactionCnt.emoji != reaction.name:
                     await message.remove_reaction(reactionCnt , member)
             
-
+#this events triggers by removing reactions and handles the game leaving and removing votes.
 @client.event
 async def on_raw_reaction_remove(payload):
     guild = await client.fetch_guild(payload.guild_id)
@@ -203,7 +218,7 @@ async def GameStart(ctx):
 
     await game.start()
     
-
+#this command finishes and resets the game
 @client.command()
 async def finishGame(ctx):
     guild = ctx.message.guild
