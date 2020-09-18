@@ -78,7 +78,7 @@ async def on_raw_reaction_add(payload):
     
     elif message.id == game.gameMessage.id :
         print(reaction)
-        if not game.players[member].vote :
+        if not member.bot and not game.players[member].vote :
             game.votes[reaction.name].suspicions += 1
             print(game.votes[reaction.name].name + f'{game.votes[reaction.name].suspicions}')
             
@@ -114,6 +114,7 @@ async def GameStart(ctx):
             reaction = await game.gameMessage.add_reaction(character[n])
             n += 1
             game.votes[character[n]] = player
+            print(character[n])
         await game.channel.send(listOfPlayers)
 
     else:
