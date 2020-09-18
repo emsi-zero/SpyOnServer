@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 import random
 
-
+words = []
 class player:
     
     def __init__(self, name):
@@ -58,6 +58,7 @@ class Game:
 
     async def start(self):
         await self.channel.send('Beep! Beep! Beep!')
+        self.word = random.choice(words)
         # checks if the game has begun and send relative message
         if self.GameStarted == False:
             self.GameStarted = True
