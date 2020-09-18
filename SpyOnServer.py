@@ -7,7 +7,7 @@ class player:
     
     def __init__(self, name):
         self.name = name
-        self.wins = 0
+        self.wins = 0.0
         self.spy = False
         self.suspicions = 0
         self.vote = False
@@ -32,6 +32,7 @@ class Game:
         self.startMessage = None
         self.channel = None
         self.votes = {}
+        self.spy = None
         
     async def addPlayer(self, member):
         self.players[member] = player(member.name)
@@ -42,9 +43,28 @@ class Game:
         print('player is removed')
 
     async def assignSpy(self):
-        spy = random.choice(list(self.players.values()))
-        spy.setSpy()
+        self.spy = random.choice(list(self.players.values()))
+        self.spy.setSpy()
         print('spy is' + spy.name)
+
+    def mostVoted(self){
+        voted = player(sb)
+        for player in self.players.values():
+            if player.suspicions > voted.suspicions:
+                voted = player
+        
+        return voted
+    }
+
+    def finishGame(self):
+        if self.spy is self.mostVoted() :
+            for player in self.players.values():
+                if not player.spy:
+                    player.wins += 0.5
+                else:
+                    player.wins -= 0.5
+        else :
+            self.spy.wins += 1.0
 
 #creates the client
 client = commands.Bot(command_prefix='/')
