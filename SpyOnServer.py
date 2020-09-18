@@ -44,19 +44,18 @@ class Game:
     #adds a player to the players list.
     async def addPlayer(self, member):
         self.players[member] = player(member.name)
-        print('player is added')
+        print(f'player {member.name} is added')
 
     # removes a player from players list.
     async def removePlayer(self , member):
         self.players.pop(member)
-        print('player is removed')
+        print(f'player {member.name} is removed')
 
 
     #assign the spy by random from players list.
     async def assignSpy(self):
         self.spy = random.choice(list(self.players.values()))
         self.spy.setSpy()
-        print('spy is' + self.spy.name)
 
     # finds and return the most suspicious player.
     def mostVoted(self):
@@ -152,9 +151,7 @@ async def on_raw_reaction_add(payload):
     # print('reaction added')
     if message.id == game.startMessage.id :
         if not game.GameStarted :
-            print(member.name)
             if not member.bot:
-                print('player is adding')
                 await game.addPlayer(member)
             else:
                 print('this player is a bot!!!!')
@@ -165,7 +162,6 @@ async def on_raw_reaction_add(payload):
     elif message.id == game.gameMessage.id :
         if not member.bot and not game.players[member].vote :
             game.votes[reaction.name].suspicions += 1
-            print(game.votes[reaction.name].name + f'{game.votes[reaction.name].suspicions}')
             game.players[member].vote = True
         elif not member.bot and game.players[member].vote :
             for reactionCnt in message.reactions :
@@ -184,16 +180,13 @@ async def on_raw_reaction_remove(payload):
     # print('reaction removed')
     if message.id == game.startMessage.id :
         if not game.GameStarted:
-            print(member.name)
             if not member.bot:
-                print('player is removing')
                 await game.removePlayer(member)
             else:
                 print('this player is a bot!!!!')
 
     elif message.id == game.gameMessage.id :
         game.votes[reaction.name].suspicions -= 1
-        print(game.votes[reaction.name].name + f'{game.votes[reaction.name].suspicions}')
         game.players[member].vote = False
             
 
