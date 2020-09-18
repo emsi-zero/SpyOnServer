@@ -70,15 +70,19 @@ async def on_raw_reaction_add(payload):
     message = await channel.fetch_message(payload.message_id)
     member = await client.fetch_user(payload.user_id)
     reaction = payload.emoji
-    print('reaction added')
+    # print('reaction added')
     if message.id == game.startMessage.id :
-        print(member.name)
-        if not member.bot:
-            print('player is adding')
-            await game.addPlayer(member)
-        else:
-            print('this player is a bot!!!!')
-    
+        if not game.GameStarted :
+            print(member.name)
+            if not member.bot:
+                print('player is adding')
+                await game.addPlayer(member)
+            else:
+                print('this player is a bot!!!!')
+        else :
+            await channel.send('The Game has already started!')
+            await message.remove_reaction(reaction , member)
+
     elif message.id == game.gameMessage.id :
         if not member.bot and not game.players[member].vote :
             game.votes[reaction.name].suspicions += 1
@@ -98,14 +102,16 @@ async def on_raw_reaction_remove(payload):
     message = await channel.fetch_message(payload.message_id)
     member = await client.fetch_user(payload.user_id)
     reaction = payload.emoji
+    # print('reaction removed')
     if message.id == game.startMessage.id :
-        print(member.name)
-        if not member.bot:
-            print('player is removing')
-            await game.removePlayer(member)
-        else:
-            print('this player is a bot!!!!')
-    
+        if not game.GameStarted:
+            print(member.name)
+            if not member.bot:
+                print('player is removing')
+                await game.removePlayer(member)
+            else:
+                print('this player is a bot!!!!')
+
     elif message.id == game.gameMessage.id :
         game.votes[reaction.name].suspicions -= 1
         print(game.votes[reaction.name].name + f'{game.votes[reaction.name].suspicions}')
