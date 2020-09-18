@@ -37,6 +37,9 @@ class Game:
         self.players[member] = player(member.name)
         print('player is added')
 
+    async def removePlayer(self , member):
+        self.players.pop(member)
+        print('player is removed')
 
 
 #creates the client
@@ -86,6 +89,29 @@ async def on_raw_reaction_add(payload):
                 if reactionCnt.emoji != reaction.name:
                     await message.remove_reaction(reactionCnt , member)
             
+
+@client.event
+async def on_raw_reaction_remove(payload):
+    guild = await client.fetch_guild(payload.guild_id)
+    game = games[guild]
+    channel = await client.fetch_channel(payload.channel_id)
+    message = await channel.fetch_message(payload.message_id)
+    member = await client.fetch_user(payload.user_id)
+    reaction = payload.emoji
+    if message.id == game.startMessage.id :
+        print(member.name)
+        if not member.bot:
+            print('player is removing')
+            await game.removePlayer(member)
+        else:
+            print('this player is a bot!!!!')
+    
+    elif message.id == game.gameMessage.id :
+        game.votes[reaction.name].suspicions -= 1
+        print(game.votes[reaction.name].name + f'{game.votes[reaction.name].suspicions}')
+        game.players[member].vote = False
+            
+
 
 # makes the bot ready
 @client.command()
