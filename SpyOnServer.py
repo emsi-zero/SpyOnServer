@@ -33,6 +33,7 @@ class Game:
         
     async def addPlayer(self, member):
         self.players[member] = player()
+        print('player is added')
 
 
 
@@ -47,14 +48,26 @@ async def callStartMessage(game):
     channel = game.channel
     game.startMessage = await channel.send('Are you ready, Agent?!')
     await game.startMessage.add_reaction('➕')
-    await game.startMessage.add_reaction('➖')
+    # await game.startMessage.add_reaction('➖')
 
 #This event makes sure that the bot is online
 @client.event
 async def on_ready():
     print('Bot is online!')
     
-    
+
+
+@client.event
+async def on_raw_reaction_add(payload):
+    guild = await client.fetch_guild(payload.guild_id)
+    game = games[guild]
+    channel = await client.fetch_channel(payload.channel_id)
+    message = await channel.fetch_message(payload.message_id)
+    print('reaction added')
+    if message.id == game.startMessage.id :
+        game.addPlayer(message.author)
+        print('player is adding')
+
 # makes the bot ready
 @client.command()
 async def SpyOnServer(ctx):
