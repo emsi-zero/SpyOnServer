@@ -120,6 +120,8 @@ class Game:
     def reset(self):
         self.spy = None
         self.GameStarted = False
+        self.spyChannel.delete()
+        self.spyChannel = None
 
     #finishes the game and reloads the game object.
     async def finishGame(self):
