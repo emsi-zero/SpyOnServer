@@ -101,7 +101,7 @@ async def GameStart(ctx):
         n = 0
         character= ['0️⃣', '1️⃣' , '2️⃣' , '3️⃣' , '4️⃣', '5️⃣' , '6️⃣' , '7️⃣' , '8️⃣' , '9️⃣', '🔟' ]
         for player in game.players.values():
-            listOfPlayers += f'{n}' + player.name +'\n'
+            listOfPlayers += f'{n} : {player.name} \n'
             await game.gameMessage.add_reaction(character[n])
             n += 1
         await game.channel.send(listOfPlayers)
