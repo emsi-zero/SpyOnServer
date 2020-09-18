@@ -5,7 +5,8 @@ import random
 
 class player:
     
-    def __init__(self):
+    def __init__(self, name):
+        self.name = name
         self.wins = 0
         self.spy = False
         self.suspicions = 0
@@ -32,7 +33,7 @@ class Game:
         self.channel = None
         
     async def addPlayer(self, member):
-        self.players[member] = player()
+        self.players[member] = player(member.name)
         print('player is added')
 
 
@@ -66,9 +67,9 @@ async def on_raw_reaction_add(payload):
     member = await client.fetch_user(payload.user_id)
     print('reaction added')
     if message.id == game.startMessage.id :
-        print(member)
+        print(member.name)
         if not member.bot: 
-            await game.addPlayer(message.author)
+            await game.addPlayer(member)
             print('player is adding')
         else:
             print('this player is a bot!!!!')
@@ -90,12 +91,20 @@ async def SpyOnServer(ctx):
 async def GameStart(ctx):
     guild = ctx.message.guild
     game = games[guild]
-    game.gameMessage = await game.channel.send('Beep! Beep! Beep!')
+    await game.channel.send('Beep! Beep! Beep!')
 
     # checks if the game has begun and send relative message
     if game.GameStarted == False:
         game.GameStarted = True
-        await game.channel.send('To All Agents! \nATTENTION! \nThere is a Spy among us! Find the culprit and bring him in ASAP!')
+        game.gameMessage = await game.channel.send('To All Agents! \nATTENTION! \nThere is a RAT among us! Find the culprit and bring him in ASAP!')
+        listOfPlayers = 'Agents: \n'
+        n = 0
+        character= ['0️⃣', '1️⃣' , '2️⃣' , '3️⃣' , '4️⃣', '5️⃣' , '6️⃣' , '7️⃣' , '8️⃣' , '9️⃣', '🔟' ]
+        for player in game.players.values():
+            listOfPlayers += f'{n}' + player.name +'\n'
+            await game.gameMessage.add_reaction(character[n])
+            n += 1
+        await game.channel.send(listOfPlayers)
 
     else:
         await game.channel.send('The search has already begun! Continue to find the Spy!')
