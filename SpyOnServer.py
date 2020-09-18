@@ -8,6 +8,10 @@ words = ['Physics' , 'Maths' , 'Chemistry']
 # a dictionary of games
 games = {}
 
+#creates the client
+prefix = '/'
+client = commands.Bot(command_prefix= prefix)
+
 # player. not users! user are linked to players in the Game object. 
 class player:
     
@@ -65,6 +69,7 @@ class Game:
         everyoneRole = guild.get_role(guild.id)
         await self.spyChannel.set_permissions(everyoneRole, read_messages=False, send_messages = False)
         await self.spyChannel.set_permissions(spyMember , read_messages = True , send_messages = True)
+        self.spyChannel.send(f'You Are The Spy Agent! You must find the secret word as soon as possible and send it here using the {prefix}Answer and typing the word in front of it! Good Luck!')
 
     # finds and return the most suspicious player.
     def mostVoted(self):
@@ -130,8 +135,7 @@ class Game:
         self.reset()
         
 
-#creates the client
-client = commands.Bot(command_prefix='/')
+
 
 
 
