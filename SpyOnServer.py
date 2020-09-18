@@ -33,6 +33,7 @@ class Game:
         self.channel = None
         self.votes = {}
         self.spy = None
+        self.word = None
         
     async def addPlayer(self, member):
         self.players[member] = player(member.name)
@@ -45,26 +46,58 @@ class Game:
     async def assignSpy(self):
         self.spy = random.choice(list(self.players.values()))
         self.spy.setSpy()
-        print('spy is' + spy.name)
+        print('spy is' + self.spy.name)
 
-    def mostVoted(self){
-        voted = player(sb)
-        for player in self.players.values():
-            if player.suspicions > voted.suspicions:
-                voted = player
+    def mostVoted(self):
+        voted = player('sb')
+        for culprit in self.players.values():
+            if culprit.suspicions > voted.suspicions:
+                voted = culprit
         
         return voted
-    }
 
-    def finishGame(self):
+    async def start(self):
+        await self.channel.send('Beep! Beep! Beep!')
+        # checks if the game has begun and send relative message
+        if self.GameStarted == False:
+            self.GameStarted = True
+            self.gameMessage = await self.channel.send('To All Agents! \nATTENTION! \nThere is a RAT among us! Find the culprit and bring him in ASAP!')
+
+            await self.assignSpy()
+
+            listOfPlayers = 'Agents: \n'
+            n = 0
+            character= ['0️⃣', '1️⃣' , '2️⃣' , '3️⃣' , '4️⃣', '5️⃣' , '6️⃣' , '7️⃣' , '8️⃣' , '9️⃣', '🔟' ]
+            for player in self.players.values():
+                listOfPlayers += f'{n} : {player.name} \n'
+                reaction = await self.gameMessage.add_reaction(character[n])
+                self.votes[character[n]] = player
+                n += 1
+
+            await self.channel.send(listOfPlayers)
+
+        else:
+             await set.channel.send('The search has already begun! Continue to find the Spy!')
+
+    def reset(self):
+        self.spy = None
+        self.GameStarted = False
+
+
+    async def finishGame(self):
         if self.spy is self.mostVoted() :
             for player in self.players.values():
+                await self.channel.send(f'The Spy is {self.spy.name}! Congratulations, Agent {player.name}! You are rewarded +0.5pts and the spy will lose 0.5 pts!')
                 if not player.spy:
                     player.wins += 0.5
                 else:
                     player.wins -= 0.5
         else :
+            await self.channel.send(f'You have FAILED, Agent! The spy has won this time! {self.spy.name} was the culprit!')
             self.spy.wins += 1.0
+
+        self.reset()
+        
 
 #creates the client
 client = commands.Bot(command_prefix='/')
@@ -77,7 +110,6 @@ async def callStartMessage(game):
     channel = game.channel
     game.startMessage = await channel.send('Are you ready, Agent?!')
     await game.startMessage.add_reaction('➕')
-    # await game.startMessage.add_reaction('➖')
 
 #This event makes sure that the bot is online
 @client.event
@@ -160,30 +192,15 @@ async def SpyOnServer(ctx):
 async def GameStart(ctx):
     guild = ctx.message.guild
     game = games[guild]
-    await game.channel.send('Beep! Beep! Beep!')
 
-    # checks if the game has begun and send relative message
-    if game.GameStarted == False:
-        game.GameStarted = True
-        game.gameMessage = await game.channel.send('To All Agents! \nATTENTION! \nThere is a RAT among us! Find the culprit and bring him in ASAP!')
-
-        await game.assignSpy()
-
-        listOfPlayers = 'Agents: \n'
-        n = 0
-        character= ['0️⃣', '1️⃣' , '2️⃣' , '3️⃣' , '4️⃣', '5️⃣' , '6️⃣' , '7️⃣' , '8️⃣' , '9️⃣', '🔟' ]
-        for player in game.players.values():
-            listOfPlayers += f'{n} : {player.name} \n'
-            reaction = await game.gameMessage.add_reaction(character[n])
-            game.votes[character[n]] = player
-            n += 1
-
-        await game.channel.send(listOfPlayers)
-
-    else:
-        await game.channel.send('The search has already begun! Continue to find the Spy!')
+    await game.start()
     
 
+@client.command()
+async def finishGame(ctx):
+    guild = ctx.message.guild
+    game = games[guild]
+    await game.finishGame()
 
 
         
