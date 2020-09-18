@@ -41,6 +41,10 @@ class Game:
         self.players.pop(member)
         print('player is removed')
 
+    async def assignSpy(self):
+        spy = random.choice(list(self.players.values()))
+        spy.setSpy()
+        print('spy is' + spy.name)
 
 #creates the client
 client = commands.Bot(command_prefix='/')
@@ -142,6 +146,9 @@ async def GameStart(ctx):
     if game.GameStarted == False:
         game.GameStarted = True
         game.gameMessage = await game.channel.send('To All Agents! \nATTENTION! \nThere is a RAT among us! Find the culprit and bring him in ASAP!')
+
+        await game.assignSpy()
+
         listOfPlayers = 'Agents: \n'
         n = 0
         character= ['0️⃣', '1️⃣' , '2️⃣' , '3️⃣' , '4️⃣', '5️⃣' , '6️⃣' , '7️⃣' , '8️⃣' , '9️⃣', '🔟' ]
