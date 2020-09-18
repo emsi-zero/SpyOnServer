@@ -5,6 +5,8 @@ import random
 # game words
 words = ['Physics' , 'Maths' , 'Chemistry']
 
+# a dictionary of games
+games = {}
 
 # player. not users! user are linked to players in the Game object. 
 class player:
@@ -40,6 +42,7 @@ class Game:
         self.votes = {}
         self.spy = None
         self.word = None
+        self.spyChannel = None
     
     #adds a player to the players list.
     async def addPlayer(self, member):
@@ -54,8 +57,14 @@ class Game:
 
     #assign the spy by random from players list.
     async def assignSpy(self):
-        self.spy = random.choice(list(self.players.values()))
+        spyMember = random.choice(list(self.players.keys()))
+        self.spy = self.players[spyMember]
         self.spy.setSpy()
+        guild = self.channel.guild
+        self.spyChannel = await guild.create_text_channel('Spy Agency')
+        everyoneRole = guild.get_role(guild.id)
+        await self.spyChannel.set_permissions(everyoneRole, read_messages=False, send_messages = False)
+        await self.spyChannel.set_permissions(spyMember , read_messages = True , send_messages = True)
 
     # finds and return the most suspicious player.
     def mostVoted(self):
@@ -109,8 +118,8 @@ class Game:
     async def finishGame(self):
         if self.spy is self.mostVoted() :
             for player in self.players.values():
-                await self.channel.send(f'The Spy is {self.spy.name}! Congratulations, Agent {player.name}! You are rewarded +0.5pts and the spy will lose 0.5 pts!')
                 if not player.spy:
+                    await self.channel.send(f'The Spy is {self.spy.name}! Congratulations, Agent {player.name}! You are rewarded +0.5pts and the spy{self.spy.name} will lose 0.5 pts!')
                     player.wins += 0.5
                 else:
                     player.wins -= 0.5
@@ -124,8 +133,7 @@ class Game:
 #creates the client
 client = commands.Bot(command_prefix='/')
 
-# a dictionary of games
-games = {}
+
 
 # resends the startMessage
 async def callStartMessage(game):
