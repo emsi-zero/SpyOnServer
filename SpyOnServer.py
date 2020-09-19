@@ -21,6 +21,7 @@ class player:
         self.spy = False
         self.suspicions = 0
         self.vote = False
+        self.knows = True
 
     #adds to players wins for scoreboard
     def wins(self):
@@ -32,7 +33,8 @@ class player:
 
     #sets the player as the spy
     def setSpy(self):
-        self.spy = True    
+        self.spy = True  
+        self.knows = False  
 
 
 #Game object. all the game properties are in stored in this object.
@@ -119,16 +121,19 @@ class Game:
 
     #finishes the game and reloads the game object.
     async def finishGame(self):
-        if self.spy is self.mostVoted() :
-            for player in self.players.values():
-                if not player.spy:
-                    await self.channel.send(f'The Spy is {self.spy.name}! Congratulations, Agent {player.name}! You are rewarded +0.5pts and the spy{self.spy.name} will lose 0.5 pts!')
-                    player.wins += 0.5
-                else:
-                    player.wins -= 0.5
-        else :
-            await self.channel.send(f'You have FAILED, Agent! The spy has won this time! {self.spy.name} was the culprit!')
-            self.spy.wins += 1.0
+        if self.spy.knows:
+            await self.channel.send(f'You have FAILED, Agents! The spy {self.spy.name} has found our secret!! ')
+        else:
+            if self.spy is self.mostVoted() :
+                for player in self.players.values():
+                    if not player.spy:
+                        await self.channel.send(f'The Spy is {self.spy.name}! Congratulations, Agent {player.name}! You are rewarded +0.5pts and the spy{self.spy.name} will lose 0.5 pts!')
+                        player.wins += 0.5
+                    else:
+                        player.wins -= 0.5
+            else :
+                await self.channel.send(f'You have FAILED, Agent! The spy has won this time! {self.spy.name} was the culprit!')
+                self.spy.wins += 1.0
 
         self.reset()
         
