@@ -53,12 +53,12 @@ class Game:
     #adds a player to the players list.
     async def addPlayer(self, member):
         self.players[member] = player(member.name)
-        print(f'player {member.name} is added')
+        # print(f'player {member.name} is added')
 
     # removes a player from players list.
     async def removePlayer(self , member):
         self.players.pop(member)
-        print(f'player {member.name} is removed')
+        # print(f'player {member.name} is removed')
 
 
     #assign the spy by random from players list.
@@ -66,8 +66,6 @@ class Game:
         spyMember = random.choice(list(self.players.keys()))
         self.spy = self.players[spyMember]
         self.spy.setSpy()
-        print('spy is' + self.spy.name)
-        print('spyMember is' + spyMember.name)
         
 
     # finds and return the most suspicious player.
@@ -168,8 +166,8 @@ async def on_raw_reaction_add(payload):
         if not game.GameStarted :
             if not member.bot:
                 await game.addPlayer(member)
-            else:
-                print('this player is a bot!!!!')
+            # else:
+            #     print('this player is a bot!!!!')
         else :
             await channel.send('The Game has already started!')
             await message.remove_reaction(reaction , member)
@@ -201,8 +199,8 @@ async def on_raw_reaction_remove(payload):
         if not game.GameStarted:
             if not member.bot:
                 await game.removePlayer(member)
-            else:
-                print('this player is a bot!!!!')
+            # else:
+            #     print('this player is a bot!!!!')
 
     elif message.id == game.gameMessage.id :
         game.votes[reaction.name].suspicions -= 1
@@ -243,7 +241,7 @@ async def Answer(ctx):
     guild = ctx.message.guild
     game = games[guild]
     if ctx.message.author == game.spy:
-        game.answerMessage = ctx.message.channel.send(f'the spy has revealed himself! we need to verify if he knows our secret! Is {ctx.message.content} the secret?!')
+        game.answerMessage = await ctx.message.channel.send(f'the spy has revealed himself! we need to verify if he knows our secret! Is {ctx.message.content} the secret?!')
         await game.answerMessage.add_reaction('➕')
 
     else:
