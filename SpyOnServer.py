@@ -182,6 +182,10 @@ async def on_raw_reaction_add(payload):
             for reactionCnt in message.reactions :
                 if reactionCnt.emoji != reaction.name:
                     await message.remove_reaction(reactionCnt , member)
+    
+    elif message.id == game.gameMessage.id :
+        if not member.bot:
+            await game.finishGame()
             
 #this events triggers by removing reactions and handles the game leaving and removing votes.
 @client.event
@@ -238,8 +242,9 @@ async def Answer(ctx):
     guild = ctx.message.guild
     game = games[guild]
     if ctx.message.author == game.spy:
-        await ctx.message.add_reaction('➕')
-        game.answerMessage = ctx.message
+        game.answerMessage = ctx.message.channel.send(f'the spy has revealed himself! we need to verify if he knows our secret! Is {ctx.message.content} the secret?!')
+        await game.answerMessage.add_reaction('➕')
+
     else:
         await ctx.message.delete()
         await ctx.message.channel.send('You Are NOT the Spy, You IDIOT!!!!')
