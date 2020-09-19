@@ -46,7 +46,6 @@ class Game:
         self.votes = {}
         self.spy = None
         self.word = None
-        self.spyChannel = None
     
     #adds a player to the players list.
     async def addPlayer(self, member):
@@ -66,12 +65,7 @@ class Game:
         self.spy.setSpy()
         print('spy is' + self.spy.name)
         print('spyMember is' + spyMember.name)
-        guild = self.channel.guild
-        self.spyChannel = await guild.create_text_channel('Spy Agency')
-        everyoneRole = guild.get_role(guild.id)
-        await self.spyChannel.set_permissions(everyoneRole, read_messages=False, send_messages = False)
-        await self.spyChannel.set_permissions(spyMember , read_messages = True , send_messages = True)
-        await self.spyChannel.send(f'You Are The Spy Agent! You must find the secret word as soon as possible and send it here using the {prefix}Answer and typing the word in front of it! Good Luck!')
+        
 
     # finds and return the most suspicious player.
     def mostVoted(self):
@@ -120,8 +114,7 @@ class Game:
     def reset(self):
         self.spy = None
         self.GameStarted = False
-        self.spyChannel.delete()
-        self.spyChannel = None
+        
 
     #finishes the game and reloads the game object.
     async def finishGame(self):
@@ -238,13 +231,6 @@ async def finishGame(ctx):
 async def Answer(ctx):
     guild = ctx.message.guild
     game = games[guild]
-    if ctx.message.channel is game.spyChannel:
-        if game.word in ctx.message.content:
-            await game.finishGame()
-        else:
-            await game.spyChannel.send("We are positive that this is not the secret! you are either decieved or wrong. Try Again Agent!")
-    else:
-        await ctx.message.delete()
 
         
     
