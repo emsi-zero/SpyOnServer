@@ -46,6 +46,7 @@ class Game:
         self.votes = {}
         self.spy = None
         self.word = None
+        self.answerMessage = None
     
     #adds a player to the players list.
     async def addPlayer(self, member):
@@ -231,6 +232,12 @@ async def finishGame(ctx):
 async def Answer(ctx):
     guild = ctx.message.guild
     game = games[guild]
+    if ctx.message.author == game.spy:
+        await ctx.message.add_reaction('➕')
+        game.answerMessage = ctx.message
+    else:
+        await ctx.message.delete()
+        await ctx.message.channel.send('You Are NOT the Spy, You IDIOT!!!!')
 
         
     
